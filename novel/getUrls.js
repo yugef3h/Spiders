@@ -42,7 +42,6 @@ export const getUrls = async (novelId) => {
       const desc = innerHtml?.match(/最后更新：(.*)<\/span>/)?.[1]
       const lastChapter = innerHtml.match(/最新章节：<.*>(.*)<\/a>/)?.[1].split('、')
       const isEmpty = isNaN(+lastChapter[0])
-      console.log(isEmpty)
       result.info = {
         title,
         author,
@@ -65,21 +64,13 @@ export const getUrls = async (novelId) => {
         result.chapters.push({
           url: cur.href,
           title: cur.title,
-          idx: isNaN(idx) ? (halfTitle.match(/第(.*)章/)?.[1] || '0') : idx
+          idx: isNaN(idx) ? (halfTitle.split(` `)[0].match(/第(.*)章/)?.[1] || '0') : idx
         })
       }
-      const chapters = result.chapters
-      const idx = result.info.lastChapter[0]
-      const lastIdx = chapters[chapters.length - 1].idx
-      if (+lastIdx < +idx) {
-        result.info.isNew = false
-        result.info.nextPage = document.querySelector('.listpage .right .onclick')?.href || ''
-      }
-
-      if (isNaN(+idx) && idx !== lastIdx) {
-        result.info.isNew = false
-        result.info.nextPage = document.querySelector('.listpage .right .onclick')?.href || ''
-      }
+      // 下一页路径
+      const href = document.querySelector('.listpage .right .onclick')?.href || ''
+      result.info.isNew = !(href && href.indexOf('index') >= 0)
+      result.info.nextPage = href
       return result
     }, result)
     if (!result.info.isNew) ++indexId
