@@ -1,0 +1,11 @@
+.idea
+.DS_Store
+.vscode
+.history
+node_modules
+
+yarn.lock
+package-lock.json
+
+novelOutput
+douyinVideosOutput
