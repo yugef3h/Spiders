@@ -8,4 +8,5 @@ async function download(novelId) {
 
 // https://www.bqgyy.com/book/20814/index_1.html
 // 20814 夜的命名术
-download(20814)
+// 16599 从红月开始
+download(16599)

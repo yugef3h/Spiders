@@ -41,13 +41,15 @@ export const getUrls = async (novelId) => {
       const mtime = innerHtml?.match(/最后更新：(.*)<\/span>/)?.[1]
       const desc = innerHtml?.match(/最后更新：(.*)<\/span>/)?.[1]
       const lastChapter = innerHtml.match(/最新章节：<.*>(.*)<\/a>/)?.[1].split('、')
+      const isEmpty = isNaN(+lastChapter[0])
+      console.log(isEmpty)
       result.info = {
         title,
         author,
         mtime,
         desc,
         img,
-        lastChapter,
+        lastChapter: isEmpty ? [lastChapter?.[0]?.split(` `)[0].match(/第(.*)章/)?.[1]] : lastChapter,
         isNew: true,
         nextPage: ''
       }
@@ -58,15 +60,23 @@ export const getUrls = async (novelId) => {
       const chaptersA = mainInfo.getElementsByTagName('a')
       for (let i = 0; i<chaptersA.length; i++) {
         const cur = chaptersA[i]
-        const idx = cur.title?.replace(`${title} `, '')?.split('、')[0]
+        const halfTitle = cur.title?.replace(`${title} `, '')
+        const idx = halfTitle?.split('、')[0]
         result.chapters.push({
           url: cur.href,
           title: cur.title,
-          idx: isNaN(idx) ? '0' : idx
+          idx: isNaN(idx) ? (halfTitle.match(/第(.*)章/)?.[1] || '0') : idx
         })
       }
       const chapters = result.chapters
-      if (+chapters[chapters.length - 1].idx < +result.info.lastChapter[0]) {
+      const idx = result.info.lastChapter[0]
+      const lastIdx = chapters[chapters.length - 1].idx
+      if (+lastIdx < +idx) {
+        result.info.isNew = false
+        result.info.nextPage = document.querySelector('.listpage .right .onclick')?.href || ''
+      }
+
+      if (isNaN(+idx) && idx !== lastIdx) {
         result.info.isNew = false
         result.info.nextPage = document.querySelector('.listpage .right .onclick')?.href || ''
       }
