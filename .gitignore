@@ -9,3 +9,4 @@ package-lock.json
 
 novelOutput
 douyinVideosOutput
+novel/*.json

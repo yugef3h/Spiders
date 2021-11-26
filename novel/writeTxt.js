@@ -82,7 +82,7 @@ export const writeTxt = async (novelId) => {
       if (!params.hasNext) return {}
       const chapterName = document.querySelector('.reader-main h1')?.innerText
       const idx = Number(chapterName.split('、')[0])
-      params.txt = `\t第${idx}章：${chapterName}\r\n`
+      params.txt = `\t第${isNaN(idx) ? chapterName.split(` `)[0].match(/第(.*)章/)?.[1] : idx}章：${chapterName}\r\n`
       const article = document.querySelector('#article')?.innerHTML
       params.txt += article.replace(/<p>/g, '\t').replace(/<\/p>/g, '\r\n') + '\r\n'
       
