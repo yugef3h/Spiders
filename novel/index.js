@@ -1,12 +1,16 @@
 import { getUrls } from './getUrls.js'
 import { writeTxt } from './writeTxt.js'
+import { searchNovel } from './search.js'
 
-async function download(novelId) {
-  await getUrls(novelId)
-  writeTxt(novelId)
+async function download(novelName) {
+  const href = await searchNovel(novelName)
+  if (!href) {
+    console.log('该小说暂未收录！')
+    return
+  }
+  await getUrls(href)
+  writeTxt(novelName)
 }
 
-// https://www.bqgyy.com/book/20814/index_1.html
-// 20814 夜的命名术
-// 16599 从红月开始
-download(16599)
+// https://www.biqugeu.net/
+download('从红月开始')
